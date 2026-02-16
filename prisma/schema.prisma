@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          Role           @default(USER)
+  comments      Comment[]
+  reviews       Review[]
+  subscription  Subscription?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Subscription {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  tier       String   @default("Free Member")
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id               String    @id @default(cuid())
+  title            String
+  slug             String    @unique
+  excerpt          String
+  content          String
+  coverImageUrl    String?
+  galleryImageUrls String?
+  published        Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  comments         Comment[]
+  reviews          Review[]
+}
+
+model Comment {
+  id          String           @id @default(cuid())
+  body        String
+  status      ModerationStatus @default(PENDING)
+  postId      String
+  userId      String
+  createdAt   DateTime         @default(now())
+  post        Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id          String           @id @default(cuid())
+  rating      Int
+  body        String
+  status      ModerationStatus @default(PENDING)
+  postId      String
+  userId      String
+  createdAt   DateTime         @default(now())
+  post        Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model SiteSetting {
+  id             String   @id @default("main")
+  bannerEnabled  Boolean  @default(true)
+  bannerText     String   @default("Welcome to AI Help Center")
+  bannerCtaLabel String   @default("Buy me a coffee")
+  bannerImageUrl String?
+  buyMeACoffeeUrl String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
