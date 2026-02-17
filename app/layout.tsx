@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | AI Help Center"
   },
   description:
-    "AI Help Center is a neubrutalist AI blog with practical tutorials, tooling reviews, and actionable guides for builders.",
+    "AI Help Center is a blog with practical tutorials, tooling reviews, and actionable guides for builders.",
   keywords: [
     "AI blog",
     "AI tutorials",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI Help Center",
     description:
-      "Practical AI tutorials and product playbooks in a bold neubrutalist blog format.",
+      "Practical AI tutorials and product playbooks for builders.",
     url: siteUrl,
     siteName: "AI Help Center",
     type: "website"
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI Help Center",
     description:
-      "Practical AI tutorials and product playbooks in a bold neubrutalist blog format."
+      "Practical AI tutorials and product playbooks for builders."
   }
 };
 

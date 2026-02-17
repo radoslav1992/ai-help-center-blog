@@ -14,7 +14,7 @@ export async function Header() {
           <Link href="/" className="brand-title">
             AI Help Center
           </Link>
-          <p className="brand-subtitle">Neubrutalist AI blog, guides, and tooling reviews</p>
+          <p className="brand-subtitle">AI blog, guides, and tooling reviews</p>
         </div>
 
         <nav className="nav-links" aria-label="Primary">
