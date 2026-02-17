@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getImageFile, getImageFiles, saveImageFile, saveImageFiles } from "@/lib/image-upload";
 import { parseImageUrls, slugify } from "@/lib/utils";
 
 async function requireUser(callbackPath: string) {
@@ -29,6 +30,26 @@ async function requireAdmin() {
   return user;
 }
 
+const pathOrUrlField = z.string().refine((value) => {
+  if (value.startsWith("/")) {
+    return true;
+  }
+
+  return z.string().url().safeParse(value).success;
+});
+
+const optionalImageField = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") {
+      return undefined;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  },
+  pathOrUrlField.optional()
+);
+
 const optionalUrlField = z.preprocess(
   (value) => {
     if (typeof value !== "string") {
@@ -40,7 +61,6 @@ const optionalUrlField = z.preprocess(
   },
   z.string().url().optional()
 );
-const urlField = z.string().url();
 
 const commentSchema = z.object({
   postId: z.string().min(1),
@@ -167,7 +187,7 @@ const createPostSchema = z.object({
   title: z.string().min(8).max(160),
   excerpt: z.string().min(16).max(220),
   content: z.string().min(80),
-  coverImageUrl: optionalUrlField,
+  coverImageUrl: optionalImageField,
   galleryImageUrls: z.string().max(5000).optional(),
   published: z.string().optional()
 });
@@ -191,8 +211,25 @@ export async function createPostAction(formData: FormData) {
   const baseSlug = slugify(parsed.data.title);
   let slug = baseSlug;
   const galleryUrls = parseImageUrls(parsed.data.galleryImageUrls);
+  const coverImageFile = getImageFile(formData.get("coverImageFile"));
+  const galleryImageFiles = getImageFiles(formData.getAll("galleryImageFiles"));
 
-  if (!galleryUrls.every((url) => urlField.safeParse(url).success)) {
+  if (!galleryUrls.every((url) => pathOrUrlField.safeParse(url).success)) {
+    redirect("/admin/posts/new?error=invalid");
+  }
+
+  let uploadedCoverImageUrl: string | null = null;
+  let uploadedGalleryUrls: string[] = [];
+
+  try {
+    if (coverImageFile) {
+      uploadedCoverImageUrl = await saveImageFile(coverImageFile, "articles/cover");
+    }
+
+    if (galleryImageFiles.length) {
+      uploadedGalleryUrls = await saveImageFiles(galleryImageFiles, "articles/gallery");
+    }
+  } catch {
     redirect("/admin/posts/new?error=invalid");
   }
 
@@ -201,14 +238,16 @@ export async function createPostAction(formData: FormData) {
     slug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
   }
 
+  const combinedGalleryUrls = [...galleryUrls, ...uploadedGalleryUrls];
+
   await db.post.create({
     data: {
       title: parsed.data.title,
       slug,
       excerpt: parsed.data.excerpt,
       content: parsed.data.content,
-      coverImageUrl: parsed.data.coverImageUrl ?? null,
-      galleryImageUrls: galleryUrls.length ? galleryUrls.join("\n") : null,
+      coverImageUrl: uploadedCoverImageUrl ?? parsed.data.coverImageUrl ?? null,
+      galleryImageUrls: combinedGalleryUrls.length > 0 ? combinedGalleryUrls.join("\n") : null,
       published: parsed.data.published === "on"
     }
   });
@@ -221,7 +260,9 @@ export async function createPostAction(formData: FormData) {
 const settingsSchema = z.object({
   bannerText: z.string().trim().min(4).max(180),
   bannerCtaLabel: z.string().trim().min(2).max(40),
-  bannerImageUrl: optionalUrlField,
+  bannerImageUrl: optionalImageField,
+  bannerImageMode: z.enum(["COVER", "CONTAIN", "FILL"]),
+  logoImageUrl: optionalImageField,
   buyMeACoffeeUrl: optionalUrlField,
   bannerEnabled: z.string().optional()
 });
@@ -233,11 +274,31 @@ export async function updateSiteSettingsAction(formData: FormData) {
     bannerText: formData.get("bannerText"),
     bannerCtaLabel: formData.get("bannerCtaLabel"),
     bannerImageUrl: formData.get("bannerImageUrl"),
+    bannerImageMode: formData.get("bannerImageMode"),
+    logoImageUrl: formData.get("logoImageUrl"),
     buyMeACoffeeUrl: formData.get("buyMeACoffeeUrl"),
     bannerEnabled: formData.get("bannerEnabled")
   });
 
   if (!parsed.success) {
+    redirect("/admin/settings?status=invalid");
+  }
+
+  const bannerImageFile = getImageFile(formData.get("bannerImageFile"));
+  const logoImageFile = getImageFile(formData.get("logoImageFile"));
+
+  let uploadedBannerImageUrl: string | null = null;
+  let uploadedLogoImageUrl: string | null = null;
+
+  try {
+    if (bannerImageFile) {
+      uploadedBannerImageUrl = await saveImageFile(bannerImageFile, "branding");
+    }
+
+    if (logoImageFile) {
+      uploadedLogoImageUrl = await saveImageFile(logoImageFile, "branding");
+    }
+  } catch {
     redirect("/admin/settings?status=invalid");
   }
 
@@ -247,7 +308,9 @@ export async function updateSiteSettingsAction(formData: FormData) {
       bannerEnabled: parsed.data.bannerEnabled === "on",
       bannerText: parsed.data.bannerText,
       bannerCtaLabel: parsed.data.bannerCtaLabel,
-      bannerImageUrl: parsed.data.bannerImageUrl ?? null,
+      bannerImageUrl: uploadedBannerImageUrl ?? parsed.data.bannerImageUrl ?? null,
+      bannerImageMode: parsed.data.bannerImageMode,
+      logoImageUrl: uploadedLogoImageUrl ?? parsed.data.logoImageUrl ?? null,
       buyMeACoffeeUrl: parsed.data.buyMeACoffeeUrl ?? null
     },
     create: {
@@ -255,7 +318,9 @@ export async function updateSiteSettingsAction(formData: FormData) {
       bannerEnabled: parsed.data.bannerEnabled === "on",
       bannerText: parsed.data.bannerText,
       bannerCtaLabel: parsed.data.bannerCtaLabel,
-      bannerImageUrl: parsed.data.bannerImageUrl ?? null,
+      bannerImageUrl: uploadedBannerImageUrl ?? parsed.data.bannerImageUrl ?? null,
+      bannerImageMode: parsed.data.bannerImageMode,
+      logoImageUrl: uploadedLogoImageUrl ?? parsed.data.logoImageUrl ?? null,
       buyMeACoffeeUrl: parsed.data.buyMeACoffeeUrl ?? null
     }
   });

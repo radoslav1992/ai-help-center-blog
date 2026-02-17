@@ -18,6 +18,12 @@ enum ModerationStatus {
   REJECTED
 }
 
+enum BannerImageMode {
+  COVER
+  CONTAIN
+  FILL
+}
+
 model User {
   id            String         @id @default(cuid())
   name          String
@@ -82,12 +88,14 @@ model Review {
 }
 
 model SiteSetting {
-  id             String   @id @default("main")
-  bannerEnabled  Boolean  @default(true)
-  bannerText     String   @default("Welcome to AI Help Center")
-  bannerCtaLabel String   @default("Buy me a coffee")
-  bannerImageUrl String?
+  id              String          @id @default("main")
+  bannerEnabled   Boolean         @default(true)
+  bannerText      String          @default("Welcome to AI Help Center")
+  bannerCtaLabel  String          @default("Buy me a coffee")
+  bannerImageUrl  String?
+  bannerImageMode BannerImageMode @default(COVER)
+  logoImageUrl    String?
   buyMeACoffeeUrl String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }

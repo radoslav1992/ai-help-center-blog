@@ -6,10 +6,12 @@ import { getSiteSettings } from "@/lib/site-settings";
 export async function Footer() {
   const [settings, session] = await Promise.all([getSiteSettings(), getServerSession(authOptions)]);
   const year = new Date().getFullYear();
+  const logoUrl = settings.logoImageUrl || "/default-logo.png";
 
   return (
     <footer className="site-shell site-footer" aria-label="Site footer">
-      <div>
+      <div className="footer-brand">
+        <img src={logoUrl} alt="AI Help Center logo" className="footer-logo" />
         <p className="brand-title">AI Help Center</p>
         <p className="meta-line">Free AI blog for practical builders.</p>
       </div>

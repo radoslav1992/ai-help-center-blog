@@ -32,9 +32,11 @@ Astro is excellent for mostly static content, but this product needs a full app 
 - Admin panel:
   - dashboard metrics
   - create/publish/unpublish posts
-  - article cover + gallery image URLs
+  - article cover + gallery image uploads or URLs
   - approve/reject comments and reviews
-  - editable global banner and Buy me a coffee URL
+  - editable global banner/logo via upload or URL
+  - logo-driven favicon
+  - editable Buy me a coffee URL
 - Prisma + SQLite persistence
 
 ## Local setup

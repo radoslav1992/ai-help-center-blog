@@ -5,6 +5,8 @@ export type SiteSettings = {
   bannerText: string;
   bannerCtaLabel: string;
   bannerImageUrl: string;
+  bannerImageMode: "COVER" | "CONTAIN" | "FILL";
+  logoImageUrl: string;
   buyMeACoffeeUrl: string;
 };
 
@@ -12,7 +14,9 @@ const defaultSettings: SiteSettings = {
   bannerEnabled: true,
   bannerText: "Welcome to AI Help Center",
   bannerCtaLabel: "Buy me a coffee",
-  bannerImageUrl: "",
+  bannerImageUrl: "/default-banner.png",
+  bannerImageMode: "COVER",
+  logoImageUrl: "/default-logo.png",
   buyMeACoffeeUrl: ""
 };
 
@@ -31,6 +35,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         bannerText: true,
         bannerCtaLabel: true,
         bannerImageUrl: true,
+        bannerImageMode: true,
+        logoImageUrl: true,
         buyMeACoffeeUrl: true
       }
     });
@@ -43,7 +49,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       bannerEnabled: settings.bannerEnabled,
       bannerText: settings.bannerText,
       bannerCtaLabel: settings.bannerCtaLabel,
-      bannerImageUrl: settings.bannerImageUrl ?? "",
+      bannerImageUrl: settings.bannerImageUrl ?? defaultSettings.bannerImageUrl,
+      bannerImageMode: settings.bannerImageMode ?? defaultSettings.bannerImageMode,
+      logoImageUrl: settings.logoImageUrl ?? defaultSettings.logoImageUrl,
       buyMeACoffeeUrl: settings.buyMeACoffeeUrl ?? ""
     };
   } catch {

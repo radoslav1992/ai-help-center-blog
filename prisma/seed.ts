@@ -32,8 +32,9 @@ async function main() {
       bannerText: "Free reviews are open. Share your feedback and support AI Help Center.",
       bannerCtaLabel: "Buy me a coffee",
       buyMeACoffeeUrl: "https://buymeacoffee.com/aihelpcenter",
-      bannerImageUrl:
-        "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+      bannerImageUrl: "/default-banner.png",
+      bannerImageMode: "COVER",
+      logoImageUrl: "/default-logo.png"
     }
   });
 

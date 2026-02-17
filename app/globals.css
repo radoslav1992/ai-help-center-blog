@@ -102,6 +102,23 @@ a:hover {
   font-size: 1.25rem;
   text-decoration: none;
   letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .brand-subtitle {
@@ -140,6 +157,20 @@ a:hover {
   gap: 0.8rem;
 }
 
+.footer-brand {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.footer-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
 .banner-card {
   margin-bottom: 1.25rem;
   background: linear-gradient(135deg, #fff, #fef3f7);
@@ -153,10 +184,35 @@ a:hover {
 
 .banner-image {
   width: 100%;
-  max-height: 220px;
-  object-fit: cover;
   border: var(--border);
   border-radius: var(--radius-sm);
+  object-position: center;
+}
+
+.banner-image--cover {
+  height: 220px;
+  object-fit: cover;
+}
+
+.banner-image--contain {
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.banner-image--fill {
+  height: 220px;
+  object-fit: fill;
+}
+
+.logo-preview-image {
+  width: 84px;
+  height: 84px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .hero-block {

@@ -15,7 +15,7 @@ export default async function NewPostPage({ searchParams }: NewPostProps) {
 
       {query.error ? <p className="error-line">Please fill every field correctly.</p> : null}
 
-      <form action={createPostAction} className="neo-form">
+      <form action={createPostAction} className="neo-form" encType="multipart/form-data">
         <label htmlFor="title">Title</label>
         <input id="title" name="title" type="text" minLength={8} maxLength={160} required />
 
@@ -23,7 +23,10 @@ export default async function NewPostPage({ searchParams }: NewPostProps) {
         <textarea id="excerpt" name="excerpt" minLength={16} maxLength={220} required />
 
         <label htmlFor="coverImageUrl">Cover image URL (optional)</label>
-        <input id="coverImageUrl" name="coverImageUrl" type="url" placeholder="https://..." />
+        <input id="coverImageUrl" name="coverImageUrl" type="text" placeholder="https://... or /uploads/..." />
+
+        <label htmlFor="coverImageFile">Cover image upload (optional)</label>
+        <input id="coverImageFile" name="coverImageFile" type="file" accept="image/*" />
 
         <label htmlFor="galleryImageUrls">Gallery image URLs (optional, one per line)</label>
         <textarea
@@ -32,6 +35,9 @@ export default async function NewPostPage({ searchParams }: NewPostProps) {
           rows={4}
           placeholder={`https://...\\nhttps://...`}
         />
+
+        <label htmlFor="galleryImageFiles">Gallery image uploads (optional)</label>
+        <input id="galleryImageFiles" name="galleryImageFiles" type="file" accept="image/*" multiple />
 
         <label htmlFor="content">Article content</label>
         <textarea id="content" name="content" minLength={80} required rows={14} />

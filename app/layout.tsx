@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { getSiteSettings } from "@/lib/site-settings";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -39,13 +40,19 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+  const faviconUrl = settings.logoImageUrl || "/default-logo.png";
+
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href={faviconUrl} />
+      </head>
       <body>
         <div className="bg-grid" />
         <Header />

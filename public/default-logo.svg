@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a7f3d0" />
+      <stop offset="1" stop-color="#90ddf0" />
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="128" fill="url(#bg)" stroke="#2D2D2D" stroke-width="20"/>
+  <rect x="96" y="118" width="320" height="276" rx="76" fill="#FFFFFF" stroke="#2D2D2D" stroke-width="18"/>
+  <rect x="136" y="166" width="240" height="132" rx="56" fill="#0D4B80" stroke="#2D2D2D" stroke-width="14"/>
+  <circle cx="214" cy="228" r="24" fill="#FFFFFF"/>
+  <circle cx="300" cy="228" r="24" fill="#FFFFFF"/>
+  <path d="M220 272C230 286 246 292 256 292C266 292 282 286 292 272" stroke="#F8A4BF" stroke-width="14" stroke-linecap="round"/>
+  <rect x="188" y="320" width="136" height="42" rx="20" fill="#F8F6F2" stroke="#2D2D2D" stroke-width="10"/>
+  <text x="256" y="349" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#2D2D2D">AI</text>
+</svg>
