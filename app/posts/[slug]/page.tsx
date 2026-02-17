@@ -169,7 +169,7 @@ export default async function PostPage({ params, searchParams }: PostPageProps) 
           </p>
         ) : !subscription?.active ? (
           <p>
-            Reviews are for members. <Link href="/subscribe">Activate free membership</Link> first.
+            Reviews are for members. <Link href="/subscribe">Become a member</Link> first.
           </p>
         ) : (
           <form action={createReviewAction} className="neo-form">

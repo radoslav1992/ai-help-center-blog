@@ -1,25 +1,11 @@
 import Link from "next/link";
 import { HighlightGrid, type HighlightArticle } from "@/components/highlight-grid";
+import { FeaturedReadsToggle } from "@/components/featured-reads-toggle";
 import { db } from "@/lib/db";
 import { average } from "@/lib/utils";
 import { getSiteSettings } from "@/lib/site-settings";
 
 function sortByNewest(a: HighlightArticle, b: HighlightArticle) {
-  return b.createdAt.getTime() - a.createdAt.getTime();
-}
-
-function sortByFeatured(a: HighlightArticle, b: HighlightArticle) {
-  const aRating = a.averageRating ?? -1;
-  const bRating = b.averageRating ?? -1;
-
-  if (bRating !== aRating) {
-    return bRating - aRating;
-  }
-
-  if (b.reviewsCount !== a.reviewsCount) {
-    return b.reviewsCount - a.reviewsCount;
-  }
-
   return b.createdAt.getTime() - a.createdAt.getTime();
 }
 
@@ -98,14 +84,13 @@ export default async function HomePage() {
   }));
 
   const byNewest = [...articles].sort(sortByNewest);
-  const byFeatured = [...articles].sort(sortByFeatured);
   const byMostReviewed = [...articles].sort(sortByMostReviewed);
 
   const usedIds = new Set<string>();
 
   const newestArticles = pickDistinct(byNewest, usedIds, 3, byNewest);
-  const featuredArticles = pickDistinct(byFeatured, usedIds, 3, byNewest);
-  const mostReviewedArticles = pickDistinct(byMostReviewed, usedIds, 3, byNewest);
+  const featuredNewest = pickDistinct(byNewest, new Set(usedIds), 3, byNewest);
+  const featuredMostReviewed = pickDistinct(byMostReviewed, new Set(usedIds), 3, byNewest);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -130,7 +115,7 @@ export default async function HomePage() {
             Browse all articles
           </Link>
           <Link href="/subscribe" className="neo-button alt-button">
-            Activate free membership
+            Become a member
           </Link>
           {settings.buyMeACoffeeUrl ? (
             <a href={settings.buyMeACoffeeUrl} target="_blank" rel="noreferrer" className="neo-button">
@@ -146,16 +131,9 @@ export default async function HomePage() {
         articles={newestArticles}
       />
 
-      <HighlightGrid
-        title="Featured Reads"
-        description="Top-rated pieces selected by review quality and community feedback."
-        articles={featuredArticles}
-      />
-
-      <HighlightGrid
-        title="Most Reviewed"
-        description="Articles that triggered the strongest discussion and most reviews."
-        articles={mostReviewedArticles}
+      <FeaturedReadsToggle
+        newestArticles={featuredNewest}
+        mostReviewedArticles={featuredMostReviewed}
       />
 
       <script
