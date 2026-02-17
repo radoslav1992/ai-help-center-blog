@@ -1,6 +1,6 @@
 # AI Help Center
 
-Neubrutalist AI blog platform built with Next.js App Router.
+AI blog platform built with Next.js App Router.
 
 ## Why Next.js (instead of Astro)
 
@@ -13,7 +13,7 @@ Astro is excellent for mostly static content, but this product needs a full app 
 
 ## Features
 
-- Neubrutalist blog UI inspired by Gumroad style
+- Clean, modern blog UI
 - dedicated home landing page and separate blog index
 - blog search and filters (query, rating, sort, images)
 - SEO-ready setup:
